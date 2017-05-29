@@ -1,0 +1,75 @@
+entity Song {
+  file String required,
+  name String required
+}
+
+entity Album {
+  name String required,
+  date ZonedDateTime
+}
+
+entity Artist {
+  name String required
+}
+
+entity Playlist {
+  name String required,
+  created ZonedDateTime required,
+  lastModified ZonedDateTime required
+}
+
+entity User {
+  username String required
+}
+
+relationship OneToMany {
+  /**
+   * A relationship
+   */
+  Artist{album} to
+  /**
+   * Another side of the same relationship
+   */
+  Album
+}
+
+relationship OneToMany {
+  /**
+   * A relationship
+   */
+  Album{song} to
+  /**
+   * Another side of the same relationship
+   */
+  Song
+}
+
+relationship OneToMany {
+  /**
+   * A relationship
+   */
+  Playlist{song} to
+  /**
+   * Another side of the same relationship
+   */
+  Song
+}
+
+relationship OneToMany {
+  /**
+   * A relationship
+   */
+  User{playlist} to
+  /**
+   * Another side of the same relationship
+   */
+  Playlist
+}
+
+
+paginate Artist, Album, Playlist with infinite-scroll
+paginate User, Song with pagination
+
+dto Song with mapstruct
+
+service Playlist, Album with serviceClass
