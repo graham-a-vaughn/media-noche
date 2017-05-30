@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <property name="now" value="now()" dbms="h2"/>
+
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+
+    <property name="floatType" value="float4" dbms="postgresql, h2"/>
+    <property name="floatType" value="float" dbms="mysql, oracle, mssql"/>
+
+    <!--
+        Added the entity Album.
+    -->
+    <changeSet id="mod_schema" author="gvaughn">
+
+        <createTable tableName="artist">
+            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp" defaultValueDate="${now}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)"/>
+            <column name="last_modified_date" type="timestamp" defaultValueDate="${now}"/>
+        </createTable>
+
+        <createTable tableName="album">
+            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="date" type="timestamp">
+                <constraints nullable="true" />
+            </column>
+
+            <column name="artist_id" type="bigint">
+                <constraints nullable="true" foreignKeyName="fk_album_artist" references="artist(id)"/>
+            </column>
+
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp" defaultValueDate="${now}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)"/>
+            <column name="last_modified_date" type="timestamp" defaultValueDate="${now}"/>
+        </createTable>
+
+        <createTable tableName="song">
+            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="filename" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="artist_id" type="bigint" >
+                <constraints nullable="false" foreignKeyName="fk_song_artist" references="artist(id)"/>
+            </column>
+
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp" defaultValueDate="${now}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)"/>
+            <column name="last_modified_date" type="timestamp" defaultValueDate="${now}"/>
+        </createTable>
+
+        <createTable tableName="media_user">
+            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp" defaultValueDate="${now}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)"/>
+            <column name="last_modified_date" type="timestamp" defaultValueDate="${now}"/>
+        </createTable>
+
+        <createTable tableName="playlist">
+            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="media_user_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_playlist_media_user" references="media_user(id)"/>
+            </column>
+
+            <column name="created_by" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp" defaultValueDate="${now}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_by" type="varchar(50)"/>
+            <column name="last_modified_date" type="timestamp" defaultValueDate="${now}"/>
+
+        </createTable>
+
+        <createTable tableName="artist_albums">
+            <column name="artist_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_artist_album_artist" references="artist(id)"/>
+            </column>
+            <column name="album_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_artist_album_album" references="album(id)"/>
+            </column>
+            <column name="index" type="integer">
+                <constraints nullable="false" unique="true" uniqueConstraintName="artist_album_index"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="album_songs">
+            <column name="album_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_album_song_album" references="album(id)"/>
+            </column>
+            <column name="song_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_album_song_song" references="song(id)"/>
+            </column>
+            <column name="index" type="integer">
+                <constraints nullable="false" unique="true" uniqueConstraintName="album_song_index"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="playlist_songs">
+            <column name="playlist_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_playlist_song_playlist" references="playlist(id)"/>
+            </column>
+            <column name="song_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_playlist_song_song" references="song(id)"/>
+            </column>
+            <column name="index" type="integer">
+                <constraints nullable="false" unique="true" uniqueConstraintName="playlist_song_index"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="media_user_playlists">
+            <column name="playlist_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_user_playlist_playlist" references="playlist(id)"/>
+            </column>
+            <column name="media_user_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_user_playlist_user" references="media_user(id)"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="artist_albums" columnNames="artist_id, album_id"/>
+        <addPrimaryKey tableName="album_songs" columnNames="album_id, song_id"/>
+        <addPrimaryKey tableName="playlist_songs" columnNames="playlist_id, song_id, index"/>
+        <addPrimaryKey tableName="media_user_playlists" columnNames="playlist_id, media_user_id"/>
+
+
+    </changeSet>
+</databaseChangeLog>

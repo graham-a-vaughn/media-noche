@@ -1,0 +1,27 @@
+
+<div>
+    <h2><span>Media User</span> {{vm.mediaUser.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="dl-horizontal jh-entity-details">
+        <dt><span>Username</span></dt>
+        <dd>
+            <span>{{vm.mediaUser.username}}</span>
+        </dd>
+        <dt><span>Playlist</span></dt>
+        <dd>
+            <a ui-sref="playlist-detail({id:vm.mediaUser.playlist.id})">{{vm.mediaUser.playlist.id}}</a>
+        </dd>
+    </dl>
+
+    <button type="submit"
+            ui-sref="{{ vm.previousState }}"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span> Back</span>
+    </button>
+
+    <button type="button" ui-sref="media-user-detail.edit({id:vm.mediaUser.id})" class="btn btn-primary">
+        <span class="glyphicon glyphicon-pencil"></span>
+        <span class="hidden-sm-down"> Edit</span>
+    </button>
+</div>

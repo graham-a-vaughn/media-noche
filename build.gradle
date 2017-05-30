@@ -217,6 +217,11 @@ task wrapper(type: Wrapper) {
 task stage(dependsOn: 'bootRepackage') {
 }
 
+task nuke(type: Exec) {
+    workingDir './utils/db'
+    commandLine './nuke-db.sh'
+}
+
 if (project.hasProperty('nodeInstall')) {
     node {
         version = "${node_version}"

@@ -18,58 +18,31 @@ entity Playlist {
   lastModified ZonedDateTime required
 }
 
-entity User {
+entity MediaUser {
   username String required
 }
 
 relationship OneToMany {
-  /**
-   * A relationship
-   */
   Artist{album} to
-  /**
-   * Another side of the same relationship
-   */
-  Album
+  Album{artist}
 }
 
-relationship OneToMany {
-  /**
-   * A relationship
-   */
+relationship ManyToOne {
   Album{song} to
-  /**
-   * Another side of the same relationship
-   */
   Song
 }
 
-relationship OneToMany {
-  /**
-   * A relationship
-   */
+relationship ManyToOne {
   Playlist{song} to
-  /**
-   * Another side of the same relationship
-   */
   Song
 }
 
-relationship OneToMany {
-  /**
-   * A relationship
-   */
-  User{playlist} to
-  /**
-   * Another side of the same relationship
-   */
+relationship ManyToOne {
+  MediaUser{playlist} to
   Playlist
 }
 
+paginate Artist, Album, Playlist, MediaUser with infinite-scroll
+paginate Song with pagination
 
-paginate Artist, Album, Playlist with infinite-scroll
-paginate User, Song with pagination
-
-dto Song with mapstruct
-
-service Playlist, Album with serviceClass
+service Playlist, Album, Artist, Song, MediaUser with serviceClass
