@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -71,24 +72,10 @@ public class LibraryDetectionService {
                 if (FileUtils.isDirectoryEmpty(artistFile, 2, getValidSongFilePredicate(), log)) {
                     continue;
                 }
-                Artist artist = artistService.addArtist(artistFile.getName());
-                newArtists.add(artist);
-                List<File> albumFiles = getAllAlbumFiles(artistFile);
-                for (File file : albumFiles) {
-                    if (FileUtils.isDirectoryEmpty(file, 2, getValidSongFilePredicate(), log)) {
-                        continue;
-                    }
-                    Album album = albumService.addAlbum(artist, file.getName());
-                    scan.setNewAlbumCount(scan.getNewAlbumCount() + 1);
-                    List<File> songFiles = getAllSongFiles(file);
-                    List<Song> songs = new ArrayList<>();
-                    for (File songFile : songFiles) {
-                        Song song = new Song(songFile.getAbsolutePath(), songFile.getName(), artist);
-                        song = songService.save(song);
-                        songs.add(song);
-                        scan.setNewSongCount(scan.getNewSongCount() + 1);
-                    }
-                    albumService.setSongs(album.getId(), songs);
+                try {
+                    persistNewArtistDirectory(scan, newArtists, artistFile);
+                } catch (Exception e) {
+                    log.error("Exception persisting new artist, continuing ...", e);
                 }
             }
 
@@ -112,6 +99,49 @@ public class LibraryDetectionService {
             scan.setSuccess(false);
         }
         return scan;
+    }
+
+    private void persistNewArtistDirectory(FileSystemLibraryScan scan, List<Artist> newArtists, File artistFile) throws IOException {
+        Artist artist = artistService.addArtist(artistFile.getName());
+        newArtists.add(artist);
+        try {
+            persistAlbumsForNewArtist(scan, artistFile, artist);
+        } catch (Exception e) {
+            log.error("Error persisting albums for new artist, continuing ...", e);
+        }
+    }
+
+    private void persistAlbumsForNewArtist(FileSystemLibraryScan scan, File artistFile, Artist artist) throws IOException {
+        List<File> albumFiles = getAllAlbumFiles(artistFile);
+        for (File file : albumFiles) {
+            if (FileUtils.isDirectoryEmpty(file, 2, getValidSongFilePredicate(), log)) {
+                continue;
+            }
+            Album album = albumService.addAlbum(artist, file.getName());
+            scan.setNewAlbumCount(scan.getNewAlbumCount() + 1);
+            try {
+                List<Song> songs = persistSongsForNewAlbum(scan, artist, file);
+                albumService.setSongs(album.getId(), songs);
+            } catch (Exception e) {
+                log.error("Error persisting songs for new album, continuing ...", e);
+            }
+        }
+    }
+
+    private List<Song> persistSongsForNewAlbum(FileSystemLibraryScan scan, Artist artist, File file) {
+        List<File> songFiles = getAllSongFiles(file);
+        List<Song> songs = new ArrayList<>();
+        for (File songFile : songFiles) {
+            try {
+                Song song = new Song(songFile.getAbsolutePath(), songFile.getName(), artist);
+                song = songService.save(song);
+                songs.add(song);
+                scan.setNewSongCount(scan.getNewSongCount() + 1);
+            } catch (Exception e) {
+                log.error("Error persisting song for new album, continuing ...", e);
+            }
+        }
+        return songs;
     }
 
     protected List<File> getNewArtistFiles(File dir) {

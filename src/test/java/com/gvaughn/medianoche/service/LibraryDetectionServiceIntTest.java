@@ -90,7 +90,6 @@ public class LibraryDetectionServiceIntTest {
         rootDir = mkdirsRoot();
 
         createLibrary(ARTISTS, ALBUMS, SONG_COUNTS);
-        //createLibrary(ARTISTS_UPDATE, ALBUMS_UPDATE, SONG_COUNTS_UPDATE);
     }
 
     private void updateLibrary() throws IOException {
@@ -222,6 +221,7 @@ public class LibraryDetectionServiceIntTest {
         //TODO: Is this anything?
     }
 
+    //TODO: Test graceful exception handling
     @After
     public void tearDown() throws IOException {
         if (rootDir != null) {
