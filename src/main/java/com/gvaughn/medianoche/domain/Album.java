@@ -34,6 +34,7 @@ public class Album extends AbstractAuditingEntity implements Serializable {
     private ZonedDateTime date;
 
     @ManyToOne
+    @JoinColumn(name = "artist_id")
     private Artist artist;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -43,6 +44,15 @@ public class Album extends AbstractAuditingEntity implements Serializable {
             nullable = false) })
     @OrderColumn(name = "index")
     private List<Song> songs = new ArrayList<>();
+
+    public Album() {
+
+    }
+
+    public Album(String name, Artist artist) {
+        this.name = name;
+        this.artist = artist;
+    }
 
     public Long getId() {
         return id;

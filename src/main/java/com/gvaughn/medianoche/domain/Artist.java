@@ -1,10 +1,13 @@
 package com.gvaughn.medianoche.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.*;
@@ -25,7 +28,7 @@ public class Artist extends AbstractAuditingEntity implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -35,6 +38,12 @@ public class Artist extends AbstractAuditingEntity implements Serializable {
             nullable = false) })
     @OrderColumn(name = "index")
     private List<Album> albums = new ArrayList<>();
+
+    public Artist() {}
+
+    public Artist(String name) {
+        this.name = name;
+    }
 
     public Long getId() {
         return id;

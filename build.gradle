@@ -1,5 +1,6 @@
 import groovy.json.JsonSlurper
 import org.gradle.internal.os.OperatingSystem
+import org.apache.tools.ant.filters.ReplaceTokens
 
 buildscript {
     repositories {
@@ -208,6 +209,22 @@ clean {
 
 task cleanResources(type: Delete) {
     delete 'build/resources'
+}
+
+processResources {
+    filesMatching('**/*.yml', ) {
+        filter ReplaceTokens, tokens: [
+            build_dir: project.property('build_dir')
+        ]
+    }
+}
+
+processTestResources {
+    filesMatching('**/*.yml', ) {
+        filter ReplaceTokens, tokens: [
+            build_dir: project.property('build_dir')
+        ]
+    }
 }
 
 task wrapper(type: Wrapper) {

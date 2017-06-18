@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing Artist.
@@ -19,13 +20,23 @@ import java.util.List;
 public class ArtistService {
 
     private final Logger log = LoggerFactory.getLogger(ArtistService.class);
-    
+
     private final ArtistRepository artistRepository;
 
     public ArtistService(ArtistRepository artistRepository) {
         this.artistRepository = artistRepository;
     }
 
+    @Transactional
+    public Artist addArtist(String name) {
+        Artist artist = new Artist(name);
+        return artistRepository.save(artist);
+    }
+
+    @Transactional
+    public List<Artist> addArtists(List<String> names) {
+        return artistRepository.save(names.stream().map(Artist::new).collect(Collectors.toList()));
+    }
     /**
      * Save a artist.
      *
@@ -40,7 +51,7 @@ public class ArtistService {
 
     /**
      *  Get all the artists.
-     *  
+     *
      *  @param pageable the pagination information
      *  @return the list of entities
      */
@@ -62,6 +73,15 @@ public class ArtistService {
         log.debug("Request to get Artist : {}", id);
         Artist artist = artistRepository.findOne(id);
         return artist;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Artist> findAll() {
+        return artistRepository.findAll();
+    }
+
+    public Artist findByName(String name) {
+        return artistRepository.findByName(name).stream().findFirst().orElse(null);
     }
 
     /**

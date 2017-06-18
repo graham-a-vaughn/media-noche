@@ -24,7 +24,7 @@ public class Song extends AbstractAuditingEntity implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "filename", nullable = false)
+    @Column(name = "filename", nullable = false, unique = true)
     private String file;
 
     @NotNull
@@ -34,6 +34,14 @@ public class Song extends AbstractAuditingEntity implements Serializable {
     @NotNull
     @ManyToOne
     private Artist artist;
+
+    public Song(){}
+
+    public Song(String file, String name, Artist artist) {
+        this.file = file;
+        this.name = name;
+        this.artist = artist;
+    }
 
     public Long getId() {
         return id;

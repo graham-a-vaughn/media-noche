@@ -1,5 +1,6 @@
 package com.gvaughn.medianoche.service;
 
+import com.gvaughn.medianoche.domain.Artist;
 import com.gvaughn.medianoche.domain.Song;
 import com.gvaughn.medianoche.repository.SongRepository;
 import org.slf4j.Logger;
@@ -19,7 +20,7 @@ import java.util.List;
 public class SongService {
 
     private final Logger log = LoggerFactory.getLogger(SongService.class);
-    
+
     private final SongRepository songRepository;
 
     public SongService(SongRepository songRepository) {
@@ -40,7 +41,7 @@ public class SongService {
 
     /**
      *  Get all the songs.
-     *  
+     *
      *  @param pageable the pagination information
      *  @return the list of entities
      */
@@ -51,6 +52,9 @@ public class SongService {
         return result;
     }
 
+    public List<Song> findAll() {
+        return songRepository.findAll();
+    }
     /**
      *  Get one song by id.
      *

@@ -107,3 +107,7 @@ jhipster:
 # ===================================================================
 
 application:
+    stub:
+        musicdir: build/tmp/music
+    fileType:
+        audioExtensions: wav,mp3,aaif,aac,flac,m4a,ogg,gsm,pcm,au,vox,wma,atrac

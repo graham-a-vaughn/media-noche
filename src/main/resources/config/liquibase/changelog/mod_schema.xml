@@ -23,7 +23,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="varchar(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" uniqueConstraintName="unique_artist_name"/>
             </column>
 
             <column name="created_by" type="varchar(50)">
@@ -61,13 +61,14 @@
             <column name="last_modified_by" type="varchar(50)"/>
             <column name="last_modified_date" type="timestamp" defaultValueDate="${now}"/>
         </createTable>
+        <addUniqueConstraint tableName="album" columnNames="artist_id, name"/>
 
         <createTable tableName="song">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="filename" type="varchar(255)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" uniqueConstraintName="unique_song_file"/>
             </column>
 
             <column name="name" type="varchar(255)">
@@ -148,7 +149,7 @@
                 <constraints nullable="false" foreignKeyName="fk_album_song_song" references="song(id)"/>
             </column>
             <column name="index" type="integer">
-                <constraints nullable="false" unique="true" uniqueConstraintName="album_song_index"/>
+                <constraints nullable="false"/>
             </column>
         </createTable>
 
@@ -177,6 +178,7 @@
         <addPrimaryKey tableName="album_songs" columnNames="album_id, song_id"/>
         <addPrimaryKey tableName="playlist_songs" columnNames="playlist_id, song_id, index"/>
         <addPrimaryKey tableName="media_user_playlists" columnNames="playlist_id, media_user_id"/>
+        <addUniqueConstraint tableName="album_songs" columnNames="album_id, song_id, index"/>
 
 
     </changeSet>

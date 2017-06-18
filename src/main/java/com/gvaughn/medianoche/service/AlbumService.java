@@ -1,6 +1,8 @@
 package com.gvaughn.medianoche.service;
 
 import com.gvaughn.medianoche.domain.Album;
+import com.gvaughn.medianoche.domain.Artist;
+import com.gvaughn.medianoche.domain.Song;
 import com.gvaughn.medianoche.repository.AlbumRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +21,24 @@ import java.util.List;
 public class AlbumService {
 
     private final Logger log = LoggerFactory.getLogger(AlbumService.class);
-    
+
     private final AlbumRepository albumRepository;
 
     public AlbumService(AlbumRepository albumRepository) {
         this.albumRepository = albumRepository;
+    }
+
+    public Album addAlbum(Artist artist, String name) {
+        //TODO: Date?
+        Album album = new Album(name, artist);
+        return save(album);
+    }
+
+    public Album setSongs(Long albumId, List<Song> songs) {
+        Album album = albumRepository.findOne(albumId);
+        album.getSongs().clear();
+        album.getSongs().addAll(songs);
+        return save(album);
     }
 
     /**
@@ -40,7 +55,7 @@ public class AlbumService {
 
     /**
      *  Get all the albums.
-     *  
+     *
      *  @param pageable the pagination information
      *  @return the list of entities
      */
@@ -49,6 +64,11 @@ public class AlbumService {
         log.debug("Request to get all Albums");
         Page<Album> result = albumRepository.findAll(pageable);
         return result;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Album> findAll() {
+        return albumRepository.findAll();
     }
 
     /**
