@@ -63,10 +63,6 @@ public class LibraryDetectionService {
 
             // Find unpersisted artist directories
             List<File>  newArtistFiles = getNewArtistFiles(rootDir);
-
-            // persist artists
-            List<String> names = new ArrayList<>(newArtistFiles.stream().map(File::getName).collect(Collectors.toList()));
-            //List<Artist> newArtists = artistService.addArtists(names);
             List<Artist> newArtists = new ArrayList<>();
 
 
@@ -87,7 +83,6 @@ public class LibraryDetectionService {
                     List<File> songFiles = getAllSongFiles(file);
                     List<Song> songs = new ArrayList<>();
                     for (File songFile : songFiles) {
-                        //log.info("Saving song file: " + songFile.getName());
                         Song song = new Song(songFile.getAbsolutePath(), songFile.getName(), artist);
                         song = songService.save(song);
                         songs.add(song);
@@ -97,6 +92,7 @@ public class LibraryDetectionService {
                 }
             }
 
+            //TODO: Handle missing library items? Or handle when load is attempted (Y)
             scan.setNewArtistCount(newArtists.size());
             scan.setSuccess(true);
         } catch (Exception e) {
@@ -136,7 +132,7 @@ public class LibraryDetectionService {
                 }
             }
         }
-        log.debug("Unknown files found in artist directory: " + unknown.size());
+        //TODO: Decide if we need to know unhandled stuff
         return artists;
     }
 
@@ -157,7 +153,7 @@ public class LibraryDetectionService {
             }
         }
 
-        log.debug("Unknown files found in album directory: " + dir.getAbsolutePath() + ": " + unknown.size());
+        //TODO: Decide if we need to know unhandled stuff
         return albums;
     }
 
@@ -170,26 +166,14 @@ public class LibraryDetectionService {
 
         File[] children = dir.listFiles();
         String[] extensions = applicationProperties.getFileType().getAudioExtensionTypes();
-        //log.info("Searching directory for songs: " + dir.getAbsolutePath());
-        //log.info("Extensions: " + extensions.length);
-        //log.info("Children: " + children.length);
         for (File child: children) {
-            //log.info("Child file: " + child.getName());
             String ext = getFileExtension(child);
-            //log.info("File extension: " + ext);
             if (Arrays.binarySearch(extensions, ext) > 0) {
-                //log.info("Extension legit");
                 songs.add(child);
-            } else {
-                //log.info("Extension fail");
             }
         }
-        //songs.addAll(Arrays.stream(children).filter(f -> Arrays.binarySearch(extensions, getFileExtension(f),
-        //    String.CASE_INSENSITIVE_ORDER) == 0).collect(Collectors.toList()));
-        //unknown.addAll(Arrays.stream(children).filter(f -> Arrays.binarySearch(extensions, getFileExtension(f),
-        //    String.CASE_INSENSITIVE_ORDER) < 0).collect(Collectors.toList()));
 
-        log.info("Unknown files found in song directory: " + dir.getAbsolutePath() + ": " + unknown.size());
+        //TODO: Decide if we need to know unhandled stuff
         return  songs;
     }
 
