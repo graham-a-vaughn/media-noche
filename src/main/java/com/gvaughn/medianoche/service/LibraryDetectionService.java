@@ -7,6 +7,7 @@ import com.gvaughn.medianoche.domain.FileSystemLibraryScan;
 import com.gvaughn.medianoche.domain.Song;
 import com.gvaughn.medianoche.repository.ArtistRepository;
 import com.gvaughn.medianoche.repository.FileSystemLibraryScanRepository;
+import com.gvaughn.medianoche.utils.DateUtils;
 import com.gvaughn.medianoche.utils.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -23,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Created by graham on 6/2/17.
@@ -54,12 +54,16 @@ public class LibraryDetectionService {
 
     @Transactional
     public FileSystemLibraryScan scanForLibraryUpdates() {
+        ZonedDateTime start = ZonedDateTime.now();
         FileSystemLibraryScan scan = new FileSystemLibraryScan();
-        scan.setStartTime(ZonedDateTime.now());
+        scan.setStartTime(start);
 
         try {
             String root = applicationProperties.getStub().getMusicdir();
             File rootDir = new File(root);
+            log.info("Performing file system library scan at " + DateUtils.format(start));
+            log.info("Scanning root directory: " + rootDir.getAbsolutePath());
+
             scan.setScanDirectories(rootDir.getAbsolutePath());
 
             // Find unpersisted artist directories
@@ -98,6 +102,9 @@ public class LibraryDetectionService {
             scan.zero();
             scan.setSuccess(false);
         }
+        log.info("Library scan completed at: " + DateUtils.format(ZonedDateTime.now()));
+        log.info("Scan results: ");
+        log.info(scan.toString());
         return scan;
     }
 

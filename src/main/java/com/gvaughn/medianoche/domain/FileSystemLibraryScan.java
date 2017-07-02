@@ -1,5 +1,6 @@
 package com.gvaughn.medianoche.domain;
 
+import com.gvaughn.medianoche.utils.DateUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -136,5 +137,18 @@ public class FileSystemLibraryScan implements Serializable {
         newArtistCount = 0;
         newAlbumCount = 0;
         newSongCount = 0;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append('\n').append(this.getClass().getSimpleName()).append(":").append(id).append('\n')
+            .append("Start time: ").append(DateUtils.format(startTime)).append('\n')
+            .append("End time: ").append(DateUtils.format(endTime)).append('\n')
+            .append("Dirs: ").append(scanDirectories).append('\n')
+            .append("Artists: ").append(newArtistCount).append('\n')
+            .append("Albums: ").append(newAlbumCount).append('\n')
+            .append("Songs: ").append(newSongCount).append('\n');
+        return builder.toString();
     }
 }

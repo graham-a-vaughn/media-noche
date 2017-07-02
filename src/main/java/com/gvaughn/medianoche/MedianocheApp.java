@@ -3,10 +3,12 @@ package com.gvaughn.medianoche;
 import com.gvaughn.medianoche.config.ApplicationProperties;
 import com.gvaughn.medianoche.config.DefaultProfileUtil;
 
+import com.gvaughn.medianoche.service.InitializationService;
 import io.github.jhipster.config.JHipsterConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.*;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -30,6 +32,9 @@ public class MedianocheApp {
 
     private final Environment env;
 
+    @Autowired
+    private InitializationService initializationService;
+
     public MedianocheApp(Environment env) {
         this.env = env;
     }
@@ -52,6 +57,7 @@ public class MedianocheApp {
             log.error("You have misconfigured your application! It should not" +
                 "run with both the 'dev' and 'cloud' profiles at the same time.");
         }
+        initializationService.initialize();
     }
 
     /**

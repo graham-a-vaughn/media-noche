@@ -42,10 +42,13 @@ public class CacheConfiguration {
             cm.createCache(com.gvaughn.medianoche.domain.User.class.getName() + ".authorities", jcacheConfiguration);
             cm.createCache(com.gvaughn.medianoche.domain.Song.class.getName(), jcacheConfiguration);
             cm.createCache(com.gvaughn.medianoche.domain.Album.class.getName(), jcacheConfiguration);
+            cm.createCache(com.gvaughn.medianoche.domain.Album.class.getName() + ".songs", jcacheConfiguration);
             cm.createCache(com.gvaughn.medianoche.domain.Artist.class.getName(), jcacheConfiguration);
             cm.createCache(com.gvaughn.medianoche.domain.Artist.class.getName() + ".albums", jcacheConfiguration);
             cm.createCache(com.gvaughn.medianoche.domain.Playlist.class.getName(), jcacheConfiguration);
+            cm.createCache(com.gvaughn.medianoche.domain.Playlist.class.getName() + ".songs", jcacheConfiguration);
             cm.createCache(com.gvaughn.medianoche.domain.MediaUser.class.getName(), jcacheConfiguration);
+            cm.createCache(com.gvaughn.medianoche.domain.FileSystemLibraryScan.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }
